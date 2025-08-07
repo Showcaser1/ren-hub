@@ -1,0 +1,2 @@
+-- key Render
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Showcaser1/res/refs/heads/main/test"))()
