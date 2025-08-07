@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RenderX2X's Roblox Scripts</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #1a73e8;
+        }
+        .script-card {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .script-card button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .copy-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .preview-btn {
+            background-color: #1a73e8;
+            color: white;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background: #333;
+            color: white;
+            border-radius: 5px;
+        }
+        .footer a {
+            color: #1a73e8;
+            margin: 0 10px;
+            text-decoration: none;
+        }
+        .preview-box {
+            display: none;
+            background: #f9f9f9;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ddd;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>RenderX2X's Roblox Scripts</h1>
+        <div id="scripts-list"></div>
+        <div class="footer">
+            <p>Join my community!</p>
+            <a href="https://discord.gg/5qsH9Hv73E" target="_blank">Discord</a>
+            <a href="https://www.youtube.com/@RenderX2X" target="_blank">YouTube</a>
+        </div>
+    </div>
+
+    <script>
+        
+        const GITHUB_USER = 'RenderX2X'; 
+        const REPO_NAME = 'Scripts'; 
+        const SCRIPTS_FOLDER = 'Scripts';
+        async function fetchScripts() {
+            try {
+                const response = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${REPO_NAME}/contents/${SCRIPTS_FOLDER}`);
+                const files = await response.json();
+                const scriptsList = document.getElementById('scripts-list');
+
+                for (const file of files) {
+                    if (file.name.endsWith('.txt')) {
+                        const card = document.createElement('div');
+                        card.className = 'script-card';
+                        card.innerHTML = `
+                            <span>${file.name}</span>
+                            <div>
+                                <button class="copy-btn" onclick="copyScript('${file.download_url}')">Copy</button>
+                                <button class="preview-btn" onclick="togglePreview('${file.download_url}', this)">Preview</button>
+                            </div>
+                            <pre class="preview-box" id="preview-${file.name}"></pre>
+                        `;
+                        scriptsList.appendChild(card);
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching scripts:', error);
+                document.getElementById('scripts-list').innerHTML = '<p>Error loading scripts. Check your repository settings.</p>';
+            }
+        }
+
+        async function copyScript(url) {
+            try {
+                const response = await fetch(url);
+                const text = await response.text();
+                await navigator.clipboard.writeText(text);
+                alert('Script copied to clipboard!');
+            } catch (error) {
+                console.error('Error copying script:', error);
+                alert('Failed to copy script.');
+            }
+        }
+
+        async function togglePreview(url, button) {
+            const previewBox = button.parentElement.nextElementSibling;
+            if (previewBox.style.display === 'block') {
+                previewBox.style.display = 'none';
+                button.textContent = 'Preview';
+            } else {
+                try {
+                    const response = await fetch(url);
+                    const text = await response.text();
+                    previewBox.textContent = text;
+                    previewBox.style.display = 'block';
+                    button.textContent = 'Hide';
+                } catch (error) {
+                    console.error('Error fetching preview:', error);
+                    previewBox.textContent = 'Error loading preview.';
+                    previewBox.style.display = 'block';
+                }
+            }
+        }
+
+        
+        fetchScripts();
+    </script>
+</body>
+</html>
