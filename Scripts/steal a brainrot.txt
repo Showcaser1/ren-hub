@@ -1,2 +1,2 @@
--- key Render
+-- key 1234
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Showcaser1/res/refs/heads/main/test"))()
